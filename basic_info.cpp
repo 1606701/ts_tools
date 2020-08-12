@@ -1,7 +1,6 @@
 #include "basic_info.h"
 #include "ui_basic_info.h"
-#include <fstream>
-#include <iostream>
+
 using namespace std;
 basic_info::basic_info(QWidget *parent) :
     QDialog(parent),

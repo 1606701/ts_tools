@@ -5,8 +5,11 @@
 #include <QEventLoop>
 #include <QString>
 #include <iostream>
-#include "mainwindow.h"
+#include <QWaitCondition>
 
+
+
+unsigned int flag = 0;
 using namespace std;
 
 my_thread::my_thread(QObject *parent) :
@@ -49,40 +52,48 @@ void my_thread::abort()
     mutex.unlock();
 }
 
-void my_thread::doWork()
+void my_thread::doWork(char *filename,unsigned char *buffer)
 {
-    qDebug()<<"thread num:"<<thread()->currentThreadId();
-    int filesize = 0;
-    QString str = nullptr;
-    char *eit_buf = new char[1024];
-    fstream fp;
-    fp.open(eit_buf,ios::in);
-    fp.seekg(0,ios::end);
-    filesize = fp.tellg();
-    fp.seekg(0,ios::beg);
-    qDebug()<<"filesize:"<<filesize;
-    while(filesize > 0)
+    ofstream fp;
+    fp.open(filename,ios::app);
+    if(!fp)
     {
-        //qDebug()<<"filesize:"<<filename;
-        memset(eit_buf,0,1024);
-        fp.read(eit_buf,1024);
-        filesize -= 1024;
-        mutex.lock();
-        bool abort = _abort;
-        mutex.unlock();
-        if(abort)
-        {
-            qDebug()<<"break: thread num:"<<thread()->currentThreadId();
-            break;
-        }
-        str = QString(QLatin1String(eit_buf));
-        emit valueChanged(str);
+        qDebug()<<"open file failed save failed"<<endl;
+        return ;
     }
+    for(int i = 0;i < 188;i++)
+    {
+        sprintf(tempbuf,"%02x ",buffer[i]);
+        fp<<tempbuf;
+    }
+    fp<<endl;
     fp.close();
-    delete []eit_buf;
     mutex.lock();
-    _working = false;
+    wait_list.wakeAll();
     mutex.unlock();
-    qDebug()<<"thread num:"<<thread()->currentThreadId();
     emit finished();
+}
+void my_thread::doWork1(char *filename,unsigned char *buffer)
+{
+    mutex.lock();
+    if(flag == 1)
+        wait_list.wait(&mutex);
+    ofstream fp;
+    fp.open(filename,ios::app);
+    if(!fp)
+    {
+        qDebug()<<"open file failed save failed"<<endl;
+        return ;
+    }
+    for(int i = 0;i < 188;i++)
+    {
+        sprintf(tempbuf,"%02x ",buffer[i]);
+        fp<<tempbuf;
+    }
+    fp<<endl;
+    fp.close();
+    flag = 0;
+    emit finished();
+    wait_list1.wakeAll();
+    mutex.unlock();
 }

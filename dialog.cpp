@@ -6,22 +6,10 @@ Dialog::Dialog(QWidget *parent) :
     ui(new Ui::Dialog)
 {
     ui->setupUi(this);
-    thread = new QThread();
-    mthread = new my_thread();
-    mthread->moveToThread(thread);
-//    connect(mthread,SIGNAL(valueChanged(QString)),ui->textBrowser,SLOT(append(QString)));
-//    connect(mthread,SIGNAL(thread_requested()),thread,SLOT(start()));
-//    connect(thread,SIGNAL(started()),mthread,SLOT(doWork()));
-//    connect(mthread,SIGNAL(finished()),thread,SLOT(quit()),Qt::DirectConnection);
 }
 
 Dialog::~Dialog()
 {
-    mthread->abort();
-    thread->wait();
-    //qDebug()<<"Deleting thread and worker in Thread "<<this->QObject::thread()->currentThreadId();
-    delete thread;
-    delete mthread;
     delete []tempbuf;
     delete ui;
 }
@@ -130,54 +118,61 @@ void Dialog::init_TDT_tree()
 }
 void Dialog::init_SDT_tree()
 {
+    if(ts_sdt_actual.length()>0)
+        init_SDT_actual_tree();
+    if(ts_sdt_other.length()>0)
+        init_SDT_other_tree();
+}
+void Dialog::init_SDT_actual_tree()
+{
     QTreeWidgetItem *SDT = new QTreeWidgetItem(ui->treeWidget);
-    SDT->setText(0,"SDT_information");
-    for(int i = 0;i < ts_sdt.length();i++)
+    SDT->setText(0,"SDT_actual_information");
+    for(int i = 0;i < ts_sdt_actual.length();i++)
     {
         QTreeWidgetItem *group = new QTreeWidgetItem(SDT);
         sprintf(tempbuf,"section%d",i+1);
         group->setText(0,tempbuf);
         QTreeWidgetItem *group1 = new QTreeWidgetItem(group);
-        sprintf(tempbuf,"table_id:%x",ts_sdt[i].table_id);
+        sprintf(tempbuf,"table_id:%x",ts_sdt_actual[i].table_id);
         group1->setText(0,tempbuf);
         QTreeWidgetItem *group2 = new QTreeWidgetItem(group);
-        sprintf(tempbuf,"section_syntax_indicator:%x",ts_sdt[i].section_syntax_indicator);
+        sprintf(tempbuf,"section_syntax_indicator:%x",ts_sdt_actual[i].section_syntax_indicator);
         group2->setText(0,tempbuf);
         QTreeWidgetItem *group3 = new QTreeWidgetItem(group);
-        sprintf(tempbuf,"section_length:%x",ts_sdt[i].section_length);
+        sprintf(tempbuf,"section_length:%x",ts_sdt_actual[i].section_length);
         group3->setText(0,tempbuf);
         QTreeWidgetItem *group4 = new QTreeWidgetItem(group);
-        sprintf(tempbuf,"transport_stream_id:%x",ts_sdt[i].transport_stream_id);
+        sprintf(tempbuf,"transport_stream_id:%x",ts_sdt_actual[i].transport_stream_id);
         group4->setText(0,tempbuf);
         QTreeWidgetItem *group5 = new QTreeWidgetItem(group);
-        sprintf(tempbuf,"version_number:%x",ts_sdt[i].version_number);
+        sprintf(tempbuf,"version_number:%x",ts_sdt_actual[i].version_number);
         group5->setText(0,tempbuf);
         QTreeWidgetItem *group6 = new QTreeWidgetItem(group);
-        sprintf(tempbuf,"section_number:%x",ts_sdt[i].section_number);
+        sprintf(tempbuf,"section_number:%x",ts_sdt_actual[i].section_number);
         group6->setText(0,tempbuf);
         QTreeWidgetItem *group7 = new QTreeWidgetItem(group);
-        sprintf(tempbuf,"last_section_number:%x",ts_sdt[i].last_section_number);
+        sprintf(tempbuf,"last_section_number:%x",ts_sdt_actual[i].last_section_number);
         group7->setText(0,tempbuf);
         QTreeWidgetItem *group8 = new QTreeWidgetItem(group);
-        sprintf(tempbuf,"original_network_id:%x",ts_sdt[i].original_network_id);
+        sprintf(tempbuf,"original_network_id:%x",ts_sdt_actual[i].original_network_id);
         group8->setText(0,tempbuf);
-        for(int j = 0;j < ts_sdt[i].bus_desc.length();j++)
+        for(int j = 0;j < ts_sdt_actual[i].bus_desc.length();j++)
         {
             QTreeWidgetItem *item = new QTreeWidgetItem(group);
             sprintf(tempbuf,"bussiness_descriptor%d",j+1);
             item->setText(0,tempbuf);
             QTreeWidgetItem *item1 = new QTreeWidgetItem(item);
-            sprintf(tempbuf,"service_id:%d",ts_sdt[i].bus_desc[j].service_id);
+            sprintf(tempbuf,"service_id:%d",ts_sdt_actual[i].bus_desc[j].service_id);
             item1->setText(0,tempbuf);
             QTreeWidgetItem *item2 = new QTreeWidgetItem(item);
-            sprintf(tempbuf,"EIT_schedule_flag:%x",ts_sdt[i].bus_desc[j].EIT_schedule_flag);
+            sprintf(tempbuf,"EIT_schedule_flag:%x",ts_sdt_actual[i].bus_desc[j].EIT_schedule_flag);
             item2->setText(0,tempbuf);
             QTreeWidgetItem *item3 = new QTreeWidgetItem(item);
-            sprintf(tempbuf,"EIT_presnet_following_flag:%x",ts_sdt[i].bus_desc[j].EIT_presnet_following_flag);
+            sprintf(tempbuf,"EIT_presnet_following_flag:%x",ts_sdt_actual[i].bus_desc[j].EIT_presnet_following_flag);
             item3->setText(0,tempbuf);
             QTreeWidgetItem *item4 = new QTreeWidgetItem(item);
-            sprintf(tempbuf,"running_status:%x",ts_sdt[i].bus_desc[j].running_status);
-            switch(ts_sdt[i].bus_desc[j].running_status)
+            sprintf(tempbuf,"running_status:%x",ts_sdt_actual[i].bus_desc[j].running_status);
+            switch(ts_sdt_actual[i].bus_desc[j].running_status)
             {
                 case 0:
                     strcat(tempbuf,"(undeined)");
@@ -203,78 +198,327 @@ void Dialog::init_SDT_tree()
             }
             item4->setText(0,tempbuf);
             QTreeWidgetItem *item5 = new QTreeWidgetItem(item);
-            sprintf(tempbuf,"free_CA_mode:%x",ts_sdt[i].bus_desc[j].free_CA_mode);
+            sprintf(tempbuf,"free_CA_mode:%x",ts_sdt_actual[i].bus_desc[j].free_CA_mode);
             item5->setText(0,tempbuf);
             QTreeWidgetItem *item6 = new QTreeWidgetItem(item);
-            sprintf(tempbuf,"descriptor_loop_length:%x",ts_sdt[i].bus_desc[j].descriptor_loop_length);
+            sprintf(tempbuf,"descriptor_loop_length:%x",ts_sdt_actual[i].bus_desc[j].descriptor_loop_length);
             item6->setText(0,tempbuf);
-            for(int k = 0;k < ts_sdt[i].bus_desc[j].ser_desc.length();k++)
+            for(int k = 0;k < ts_sdt_actual[i].bus_desc[j].ser_desc.length();k++)
             {
                 QTreeWidgetItem *title = new QTreeWidgetItem(item);
                 sprintf(tempbuf,"service_descriptor%d",k+1);
                 title->setText(0,tempbuf);
                 QTreeWidgetItem *title1 = new QTreeWidgetItem(title);
-                sprintf(tempbuf,"descriptor_tag:%x",ts_sdt[i].bus_desc[j].ser_desc[k].descriptor_tag);
+                sprintf(tempbuf,"descriptor_tag:%x",ts_sdt_actual[i].bus_desc[j].ser_desc[k].descriptor_tag);
                 title1->setText(0,tempbuf);
                 QTreeWidgetItem *title2 = new QTreeWidgetItem(title);
-                sprintf(tempbuf,"descriptor_length:%x",ts_sdt[i].bus_desc[j].ser_desc[k].descriptor_length);
+                sprintf(tempbuf,"descriptor_length:%x",ts_sdt_actual[i].bus_desc[j].ser_desc[k].descriptor_length);
                 title2->setText(0,tempbuf);
                 QTreeWidgetItem *title3 = new QTreeWidgetItem(title);
-                sprintf(tempbuf,"service_type:%x",ts_sdt[i].bus_desc[j].ser_desc[k].service_type);
+                sprintf(tempbuf,"service_type:%x",ts_sdt_actual[i].bus_desc[j].ser_desc[k].service_type);
                 title3->setText(0,tempbuf);
                 QTreeWidgetItem *title4 = new QTreeWidgetItem(title);
-                sprintf(tempbuf,"service_provider_name_length:%x",ts_sdt[i].bus_desc[j].ser_desc[k].service_provider_name_length);
+                sprintf(tempbuf,"service_provider_name_length:%x",ts_sdt_actual[i].bus_desc[j].ser_desc[k].service_provider_name_length);
                 title4->setText(0,tempbuf);
                 QTreeWidgetItem *title5 = new QTreeWidgetItem(title);
-                title5->setText(0,ts_sdt[i].bus_desc[j].ser_desc[k].service_provider_name);
+                title5->setText(0,ts_sdt_actual[i].bus_desc[j].ser_desc[k].service_provider_name);
                 QTreeWidgetItem *title6 = new QTreeWidgetItem(title);
-                sprintf(tempbuf,"service_name_length:%x",ts_sdt[i].bus_desc[j].ser_desc[k].service_name_length);
+                sprintf(tempbuf,"service_name_length:%x",ts_sdt_actual[i].bus_desc[j].ser_desc[k].service_name_length);
                 title6->setText(0,tempbuf);
                 QTreeWidgetItem *title7 = new QTreeWidgetItem(title);
-                title7->setText(0,ts_sdt[i].bus_desc[j].ser_desc[k].service_name);
+                title7->setText(0,ts_sdt_actual[i].bus_desc[j].ser_desc[k].service_name);
             }
-            for(int k = 0;k < ts_sdt[i].bus_desc[j].pri_data.length();k++)
+            for(int k = 0;k < ts_sdt_actual[i].bus_desc[j].pri_data.length();k++)
             {
                 QTreeWidgetItem *title = new QTreeWidgetItem(item);
                 sprintf(tempbuf,"private_data_specifier_descriptor%d",k+1);
                 title->setText(0,tempbuf);
                 QTreeWidgetItem *title1 = new QTreeWidgetItem(title);
-                sprintf(tempbuf,"descriptor_tag:%x",ts_sdt[i].bus_desc[j].pri_data[k].descriptor_tag);
+                sprintf(tempbuf,"descriptor_tag:%x",ts_sdt_actual[i].bus_desc[j].pri_data[k].descriptor_tag);
                 title1->setText(0,tempbuf);
                 QTreeWidgetItem *title2 = new QTreeWidgetItem(title);
-                sprintf(tempbuf,"descriptor_length:%x",ts_sdt[i].bus_desc[j].pri_data[k].descriptor_length);
+                sprintf(tempbuf,"descriptor_length:%x",ts_sdt_actual[i].bus_desc[j].pri_data[k].descriptor_length);
                 title2->setText(0,tempbuf);
                 QTreeWidgetItem *title3 = new QTreeWidgetItem(title);
-                sprintf(tempbuf,"private_data_specifier:%x",ts_sdt[i].bus_desc[j].pri_data[k].private_data_specifier);
+                sprintf(tempbuf,"private_data_specifier:%x",ts_sdt_actual[i].bus_desc[j].pri_data[k].private_data_specifier);
                 title3->setText(0,tempbuf);
             }
-            for(int k = 0;k < ts_sdt[i].bus_desc[j].un_desc.length();k++)
+            for(int k = 0;k < ts_sdt_actual[i].bus_desc[j].un_desc.length();k++)
             {
                 QTreeWidgetItem *title = new QTreeWidgetItem(item);
                 sprintf(tempbuf,"unkonwn_descriptor%d",k+1);
                 title->setText(0,tempbuf);
                 QTreeWidgetItem *title1 = new QTreeWidgetItem(title);
-                sprintf(tempbuf,"descriptor_tag:%x",ts_sdt[i].bus_desc[j].un_desc[k].descriptor_tag);
+                sprintf(tempbuf,"descriptor_tag:%x",ts_sdt_actual[i].bus_desc[j].un_desc[k].descriptor_tag);
                 title1->setText(0,tempbuf);
                 QTreeWidgetItem *title2 = new QTreeWidgetItem(title);
-                sprintf(tempbuf,"descriptor_length:%x",ts_sdt[i].bus_desc[j].un_desc[k].descriptor_length);
+                sprintf(tempbuf,"descriptor_length:%x",ts_sdt_actual[i].bus_desc[j].un_desc[k].descriptor_length);
                 title2->setText(0,tempbuf);
                 QTreeWidgetItem *title3 = new QTreeWidgetItem(title);
                 title3->setText(0,"data");
-                for(int m = 0;m < ts_sdt[i].bus_desc[j].un_desc[k].data.length();m++)
+                for(int m = 0;m < ts_sdt_actual[i].bus_desc[j].un_desc[k].data.length();m++)
                 {
                     QTreeWidgetItem *title4 = new QTreeWidgetItem(title3);
-                    sprintf(tempbuf,"%x ",ts_sdt[i].bus_desc[j].un_desc[k].data[m]);
+                    title4->setText(0,ts_sdt_actual[i].bus_desc[j].un_desc[k].data[m]);
+                }
+            }
+        }
+        QTreeWidgetItem *group9 = new QTreeWidgetItem(group);
+        sprintf(tempbuf,"CRC32:%x",ts_sdt_actual[i].CRC_32);
+        group9->setText(0,tempbuf);
+        QTreeWidgetItem *group10 = new QTreeWidgetItem(group);
+        sprintf(tempbuf,"check_CRC32:%x",ts_sdt_actual[i].check_CRC32);
+        group10->setText(0,tempbuf);
+    }
+}
+void Dialog::init_SDT_other_tree()
+{
+    QTreeWidgetItem *SDT = new QTreeWidgetItem(ui->treeWidget);
+    SDT->setText(0,"SDT_other_information");
+    for(int i = 0;i < ts_sdt_other.length();i++)
+    {
+        QTreeWidgetItem *group = new QTreeWidgetItem(SDT);
+        sprintf(tempbuf,"section%d",i+1);
+        group->setText(0,tempbuf);
+        QTreeWidgetItem *group1 = new QTreeWidgetItem(group);
+        sprintf(tempbuf,"table_id:%x",ts_sdt_other[i].table_id);
+        group1->setText(0,tempbuf);
+        QTreeWidgetItem *group2 = new QTreeWidgetItem(group);
+        sprintf(tempbuf,"section_syntax_indicator:%x",ts_sdt_other[i].section_syntax_indicator);
+        group2->setText(0,tempbuf);
+        QTreeWidgetItem *group3 = new QTreeWidgetItem(group);
+        sprintf(tempbuf,"section_length:%x",ts_sdt_other[i].section_length);
+        group3->setText(0,tempbuf);
+        QTreeWidgetItem *group4 = new QTreeWidgetItem(group);
+        sprintf(tempbuf,"transport_stream_id:%x",ts_sdt_other[i].transport_stream_id);
+        group4->setText(0,tempbuf);
+        QTreeWidgetItem *group5 = new QTreeWidgetItem(group);
+        sprintf(tempbuf,"version_number:%x",ts_sdt_other[i].version_number);
+        group5->setText(0,tempbuf);
+        QTreeWidgetItem *group6 = new QTreeWidgetItem(group);
+        sprintf(tempbuf,"section_number:%x",ts_sdt_other[i].section_number);
+        group6->setText(0,tempbuf);
+        QTreeWidgetItem *group7 = new QTreeWidgetItem(group);
+        sprintf(tempbuf,"last_section_number:%x",ts_sdt_other[i].last_section_number);
+        group7->setText(0,tempbuf);
+        QTreeWidgetItem *group8 = new QTreeWidgetItem(group);
+        sprintf(tempbuf,"original_network_id:%x",ts_sdt_other[i].original_network_id);
+        group8->setText(0,tempbuf);
+        for(int j = 0;j < ts_sdt_other[i].bus_desc.length();j++)
+        {
+            QTreeWidgetItem *item = new QTreeWidgetItem(group);
+            sprintf(tempbuf,"bussiness_descriptor%d",j+1);
+            item->setText(0,tempbuf);
+            QTreeWidgetItem *item1 = new QTreeWidgetItem(item);
+            sprintf(tempbuf,"service_id:%d",ts_sdt_other[i].bus_desc[j].service_id);
+            item1->setText(0,tempbuf);
+            QTreeWidgetItem *item2 = new QTreeWidgetItem(item);
+            sprintf(tempbuf,"EIT_schedule_flag:%x",ts_sdt_other[i].bus_desc[j].EIT_schedule_flag);
+            item2->setText(0,tempbuf);
+            QTreeWidgetItem *item3 = new QTreeWidgetItem(item);
+            sprintf(tempbuf,"EIT_presnet_following_flag:%x",ts_sdt_other[i].bus_desc[j].EIT_presnet_following_flag);
+            item3->setText(0,tempbuf);
+            QTreeWidgetItem *item4 = new QTreeWidgetItem(item);
+            sprintf(tempbuf,"running_status:%x",ts_sdt_other[i].bus_desc[j].running_status);
+            switch(ts_sdt_other[i].bus_desc[j].running_status)
+            {
+                case 0:
+                    strcat(tempbuf,"(undeined)");
+                    break;
+                case 1:
+                    strcat(tempbuf,"(not running)");
+                    break;
+                case 2:
+                    strcat(tempbuf,"(starts in a few secoends)");
+                    break;
+                case 3:
+                    strcat(tempbuf,"(pausing)");
+                    break;
+                case 4:
+                    strcat(tempbuf,"(running)");
+                    break;
+                case 5:
+                    strcat(tempbuf,"(service off-air)");
+                    break;
+                default:
+                    strcat(tempbuf,"(reserved_future_use)");
+                    break;
+            }
+            item4->setText(0,tempbuf);
+            QTreeWidgetItem *item5 = new QTreeWidgetItem(item);
+            sprintf(tempbuf,"free_CA_mode:%x",ts_sdt_other[i].bus_desc[j].free_CA_mode);
+            item5->setText(0,tempbuf);
+            QTreeWidgetItem *item6 = new QTreeWidgetItem(item);
+            sprintf(tempbuf,"descriptor_loop_length:%x",ts_sdt_other[i].bus_desc[j].descriptor_loop_length);
+            item6->setText(0,tempbuf);
+            for(int k = 0;k < ts_sdt_other[i].bus_desc[j].ser_desc.length();k++)
+            {
+                QTreeWidgetItem *title = new QTreeWidgetItem(item);
+                sprintf(tempbuf,"service_descriptor%d",k+1);
+                title->setText(0,tempbuf);
+                QTreeWidgetItem *title1 = new QTreeWidgetItem(title);
+                sprintf(tempbuf,"descriptor_tag:%x",ts_sdt_other[i].bus_desc[j].ser_desc[k].descriptor_tag);
+                title1->setText(0,tempbuf);
+                QTreeWidgetItem *title2 = new QTreeWidgetItem(title);
+                sprintf(tempbuf,"descriptor_length:%x",ts_sdt_other[i].bus_desc[j].ser_desc[k].descriptor_length);
+                title2->setText(0,tempbuf);
+                QTreeWidgetItem *title3 = new QTreeWidgetItem(title);
+                sprintf(tempbuf,"service_type:%x",ts_sdt_other[i].bus_desc[j].ser_desc[k].service_type);
+                title3->setText(0,tempbuf);
+                QTreeWidgetItem *title4 = new QTreeWidgetItem(title);
+                sprintf(tempbuf,"service_provider_name_length:%x",ts_sdt_other[i].bus_desc[j].ser_desc[k].service_provider_name_length);
+                title4->setText(0,tempbuf);
+                QTreeWidgetItem *title5 = new QTreeWidgetItem(title);
+                title5->setText(0,ts_sdt_other[i].bus_desc[j].ser_desc[k].service_provider_name);
+                QTreeWidgetItem *title6 = new QTreeWidgetItem(title);
+                sprintf(tempbuf,"service_name_length:%x",ts_sdt_other[i].bus_desc[j].ser_desc[k].service_name_length);
+                title6->setText(0,tempbuf);
+                QTreeWidgetItem *title7 = new QTreeWidgetItem(title);
+                title7->setText(0,ts_sdt_other[i].bus_desc[j].ser_desc[k].service_name);
+            }
+            for(int k = 0;k < ts_sdt_other[i].bus_desc[j].pri_data.length();k++)
+            {
+                QTreeWidgetItem *title = new QTreeWidgetItem(item);
+                sprintf(tempbuf,"private_data_specifier_descriptor%d",k+1);
+                title->setText(0,tempbuf);
+                QTreeWidgetItem *title1 = new QTreeWidgetItem(title);
+                sprintf(tempbuf,"descriptor_tag:%x",ts_sdt_other[i].bus_desc[j].pri_data[k].descriptor_tag);
+                title1->setText(0,tempbuf);
+                QTreeWidgetItem *title2 = new QTreeWidgetItem(title);
+                sprintf(tempbuf,"descriptor_length:%x",ts_sdt_other[i].bus_desc[j].pri_data[k].descriptor_length);
+                title2->setText(0,tempbuf);
+                QTreeWidgetItem *title3 = new QTreeWidgetItem(title);
+                sprintf(tempbuf,"private_data_specifier:%x",ts_sdt_other[i].bus_desc[j].pri_data[k].private_data_specifier);
+                title3->setText(0,tempbuf);
+            }
+            for(int k = 0;k < ts_sdt_other[i].bus_desc[j].un_desc.length();k++)
+            {
+                QTreeWidgetItem *title = new QTreeWidgetItem(item);
+                sprintf(tempbuf,"unkonwn_descriptor%d",k+1);
+                title->setText(0,tempbuf);
+                QTreeWidgetItem *title1 = new QTreeWidgetItem(title);
+                sprintf(tempbuf,"descriptor_tag:%x",ts_sdt_other[i].bus_desc[j].un_desc[k].descriptor_tag);
+                title1->setText(0,tempbuf);
+                QTreeWidgetItem *title2 = new QTreeWidgetItem(title);
+                sprintf(tempbuf,"descriptor_length:%x",ts_sdt_other[i].bus_desc[j].un_desc[k].descriptor_length);
+                title2->setText(0,tempbuf);
+                QTreeWidgetItem *title3 = new QTreeWidgetItem(title);
+                title3->setText(0,"data");
+                for(int m = 0;m < ts_sdt_other[i].bus_desc[j].un_desc[k].data.length();m++)
+                {
+                    QTreeWidgetItem *title4 = new QTreeWidgetItem(title3);
+                    sprintf(tempbuf,"%x ",ts_sdt_other[i].bus_desc[j].un_desc[k].data[m]);
                     title4->setText(0,tempbuf);
                 }
             }
         }
         QTreeWidgetItem *group9 = new QTreeWidgetItem(group);
-        sprintf(tempbuf,"CRC32:%x",ts_sdt[i].CRC_32);
+        sprintf(tempbuf,"CRC32:%x",ts_sdt_other[i].CRC_32);
         group9->setText(0,tempbuf);
         QTreeWidgetItem *group10 = new QTreeWidgetItem(group);
-        sprintf(tempbuf,"check_CRC32:%x",ts_sdt[i].check_CRC32);
+        sprintf(tempbuf,"check_CRC32:%x",ts_sdt_other[i].check_CRC32);
         group10->setText(0,tempbuf);
+    }
+}
+void Dialog::init_BAT_tree()
+{
+    QTreeWidgetItem *BAT = new QTreeWidgetItem(ui->treeWidget);
+    BAT->setText(0,"BAT_other_information");
+    for(int i = 0;i < ts_bat.length();i++)
+    {
+        QTreeWidgetItem *group = new QTreeWidgetItem(BAT);
+        sprintf(tempbuf,"section(bouquet_id:%x,version_number:%x,section_number:%d)",ts_bat[i].bouquet_id
+                                                                                    ,ts_bat[i].version_number
+                                                                                    ,ts_bat[i].section_number);
+        group->setText(0,tempbuf);
+        QTreeWidgetItem *group1 = new QTreeWidgetItem(group);
+        sprintf(tempbuf,"table_id:%x",ts_bat[i].table_id);
+        group1->setText(0,tempbuf);
+        QTreeWidgetItem *group2 = new QTreeWidgetItem(group);
+        sprintf(tempbuf,"section_syntax_indicator:%x",ts_bat[i].section_syntax_indicator);
+        group2->setText(0,tempbuf);
+        QTreeWidgetItem *group3 = new QTreeWidgetItem(group);
+        sprintf(tempbuf,"section_length:%x",ts_bat[i].section_length);
+        group3->setText(0,tempbuf);
+        QTreeWidgetItem *group4 = new QTreeWidgetItem(group);
+        sprintf(tempbuf,"bouquet_id:%x",ts_bat[i].bouquet_id);
+        group4->setText(0,tempbuf);
+        QTreeWidgetItem *group5 = new QTreeWidgetItem(group);
+        sprintf(tempbuf,"version_number:%x",ts_bat[i].version_number);
+        group5->setText(0,tempbuf);
+        QTreeWidgetItem *group6 = new QTreeWidgetItem(group);
+        sprintf(tempbuf,"section_number:%x",ts_bat[i].section_number);
+        group6->setText(0,tempbuf);
+        QTreeWidgetItem *group7 = new QTreeWidgetItem(group);
+        sprintf(tempbuf,"last_section_number:%x",ts_bat[i].last_section_number);
+        group7->setText(0,tempbuf);
+        QTreeWidgetItem *group8 = new QTreeWidgetItem(group);
+        sprintf(tempbuf,"bouquet_descriptors_length:%x",ts_bat[i].bouquet_descriptors_length);
+        group8->setText(0,tempbuf);
+        QTreeWidgetItem *group9 = new QTreeWidgetItem(group);
+        group9->setText(0,"desciptors");
+        for(int j = 0; j < ts_bat[i].bou_desc.length();j++)
+        {
+            QTreeWidgetItem *item = new QTreeWidgetItem(group9);
+            item->setText(0,"bouquet_name_descriptors");
+            QTreeWidgetItem *item1 = new QTreeWidgetItem(item);
+            sprintf(tempbuf,"descriptor_tag:%x",ts_bat[i].bou_desc[j].descriptor_tag);
+            item1->setText(0,tempbuf);
+            QTreeWidgetItem *item2 = new QTreeWidgetItem(item);
+            sprintf(tempbuf,"descriptor_length:%x",ts_bat[i].bou_desc[j].descriptor_length);
+            item2->setText(0,tempbuf);
+            QTreeWidgetItem *item3 = new QTreeWidgetItem(item);
+            item3->setText(0,ts_bat[i].bou_desc[j].data);
+        }
+        QTreeWidgetItem *group10 = new QTreeWidgetItem(group);
+        sprintf(tempbuf,"transport_stream_loop_length:%x",ts_bat[i].transport_stream_loop_length);
+        group10->setText(0,tempbuf);
+        for(int j = 0;j < ts_bat[i].tran_desc.length();j++)
+        {
+            QTreeWidgetItem *item = new QTreeWidgetItem(group);
+            sprintf(tempbuf,"TS_descriptor%d",j+1);
+            item->setText(0,tempbuf);
+            QTreeWidgetItem *item1 = new QTreeWidgetItem(item);
+            sprintf(tempbuf,"transport_stram_id:%x",ts_bat[i].tran_desc[j].transport_stram_id);
+            item1->setText(0,tempbuf);
+            QTreeWidgetItem *item2 = new QTreeWidgetItem(item);
+            sprintf(tempbuf,"original_network_id:%x",ts_bat[i].tran_desc[j].original_network_id);
+            item2->setText(0,tempbuf);
+            QTreeWidgetItem *item3 = new QTreeWidgetItem(item);
+            sprintf(tempbuf,"transport_descriptors_length:%x",ts_bat[i].tran_desc[j].transport_descriptors_length);
+            item3->setText(0,tempbuf);
+            QTreeWidgetItem *item4 = new QTreeWidgetItem(item);
+            item4->setText(0,"descriptors");
+            for(int k = 0; k < ts_bat[i].tran_desc[j].ser_desc.length();k++)
+            {
+                QTreeWidgetItem *title = new QTreeWidgetItem(item4);
+                title->setText(0,"service_list_descriptor");
+                QTreeWidgetItem *title1 = new QTreeWidgetItem(title);
+                sprintf(tempbuf,"descriptor_tag:%x",ts_bat[i].tran_desc[j].ser_desc[k].descriptor_tag);
+                title1->setText(0,tempbuf);
+                QTreeWidgetItem *title2 = new QTreeWidgetItem(title);
+                sprintf(tempbuf,"descriptor_length:%x",ts_bat[i].tran_desc[j].ser_desc[k].descriptor_length);
+                title2->setText(0,tempbuf);
+                for(int l = 0;l < ts_bat[i].tran_desc[j].ser_desc[k].nit_service.length();l++)
+                {
+                    QTreeWidgetItem *row = new QTreeWidgetItem(title);
+                    sprintf(tempbuf,"business_descriptor%d",l+1);
+                    row->setText(0,tempbuf);
+                    QTreeWidgetItem *row1 = new QTreeWidgetItem(row);
+                    sprintf(tempbuf,"service_id:%d",ts_bat[i].tran_desc[j].ser_desc[k].nit_service[l].service_id);
+                    row1->setText(0,tempbuf);
+                    QTreeWidgetItem *row2 = new QTreeWidgetItem(row);
+                    sprintf(tempbuf,"service_type:%x",ts_bat[i].tran_desc[j].ser_desc[k].nit_service[l].service_type);
+                    row2->setText(0,tempbuf);
+                }
+            }
+        }
+        QTreeWidgetItem *group11 = new QTreeWidgetItem(group);
+        sprintf(tempbuf,"CRC_32:%x",ts_bat[i].CRC_32);
+        group11->setText(0,tempbuf);
+        QTreeWidgetItem *group12 = new QTreeWidgetItem(group);
+        sprintf(tempbuf,"check_CRC32:%x",ts_bat[i].check_CRC32);
+        group12->setText(0,tempbuf);
     }
 }
 void Dialog::init_EIT_tree()
@@ -1318,22 +1562,9 @@ void Dialog::init_tree()
         init_TOT_tree();
     if(ts_tdt.length() > 0)
         init_TDT_tree();
-    if(ts_sdt.length() > 0)
-        init_SDT_tree();
+    init_SDT_tree();
     init_EIT_tree();
+    if(ts_bat.length() > 0)
+        init_BAT_tree();
 }
-//void Dialog::on_pushButton_clicked()
-//{
-//    ui->textBrowser->clear();
-//    mthread->abort();
-//    thread->wait();
-//    mthread->request_thread();
-//}
 
-//void Dialog::on_pushButton_2_clicked()
-//{
-//    ui->textBrowser->clear();
-//    mthread->abort();
-//    thread->wait();
-//    mthread->request_thread1();
-//}

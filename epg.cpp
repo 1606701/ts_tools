@@ -61,7 +61,7 @@ void EPG::category_choice_epg(unsigned int level_1, unsigned int level_2,char *b
                         strcat(buf_category,"user_define");
                         break;
                     default:
-                        strcat(buf_category,"unkonwn");
+                        strcat(buf_category,"reserved_for_future_use");
                         break;
                 }
                 break;
@@ -84,6 +84,9 @@ void EPG::category_choice_epg(unsigned int level_1, unsigned int level_2,char *b
                     case 4:
                         strcat(buf_category,"debate");
                         break;
+                    case 0xF:
+                        strcat(buf_category,"user_defined");
+                        break;
                     default:
                         strcat(buf_category,"unkonwn");
                         break;
@@ -104,6 +107,9 @@ void EPG::category_choice_epg(unsigned int level_1, unsigned int level_2,char *b
                     break;
                 case 3:
                     strcat(buf_category,"talk_show");
+                    break;
+                case 0xF:
+                    strcat(buf_category,"user_defined");
                     break;
                 default:
                     strcat(buf_category,"unkonwn");
@@ -150,11 +156,42 @@ void EPG::category_choice_epg(unsigned int level_1, unsigned int level_2,char *b
                     case 0xB:
                         strcat(buf_category,"martial");
                         break;
+                    case 0xF:
+                        strcat(buf_category,"user_defined");
+                        break;
                     default:
                         strcat(buf_category,"unkonwn");
                         break;
                 }
                 break;
+            case 5:sprintf(buf_category,"%s","Children's_");
+                switch (level_2)
+                {
+                    case 0:
+                        strcat(buf_category,"general");
+                        break;
+                    case 1:
+                        strcat(buf_category,"pre-school_children's_programmes");
+                        break;
+                    case 2:
+                        strcat(buf_category,"entertainment programmes for 6 to 14");
+                        break;
+                    case 3:
+                        strcat(buf_category,"entertainment programmes for 10 to 16");
+                        break;
+                    case 4:
+                        strcat(buf_category,"informational");
+                        break;
+                    case 5:
+                        strcat(buf_category,"cartoons/puppets");
+                        break;
+                    case 0xF:
+                        strcat(buf_category,"user_defined");
+                        break;
+                    default:
+                        strcat(buf_category,"unkonwn");
+                        break;
+                }
             case 6:
                 sprintf(buf_category,"%s","Music_");
                 switch(level_2)
@@ -163,7 +200,25 @@ void EPG::category_choice_epg(unsigned int level_1, unsigned int level_2,char *b
                         strcat(buf_category,"general");
                         break;
                     case 1:
-                        strcat(buf_category,"rock");
+                        strcat(buf_category,"rock/pop");
+                        break;
+                    case 2:
+                        strcat(buf_category,"serious music/classical music");
+                        break;
+                    case 3:
+                        strcat(buf_category,"folk/traditional music");
+                        break;
+                    case 4:
+                        strcat(buf_category,"jazz");
+                        break;
+                    case 5:
+                        strcat(buf_category,"musical/opera");
+                        break;
+                    case 6:
+                        strcat(buf_category,"ballet");
+                        break;
+                    case 0xF:
+                        strcat(buf_category,"user defined");
                         break;
                     default:
                         strcat(buf_category,"unkonwn");
@@ -174,8 +229,161 @@ void EPG::category_choice_epg(unsigned int level_1, unsigned int level_2,char *b
                 sprintf(buf_category,"%s","Arts_");
                 switch(level_2)
                 {
+                    case 0:
+                        strcat(buf_category,"arts/culture");
+                        break;
+                    case 1:
+                        strcat(buf_category,"performing arts");
+                        break;
+                    case 2:
+                        strcat(buf_category,"fine arts");
+                        break;
+                    case 3:
+                        strcat(buf_category,"religion");
+                        break;
+                    case 4:
+                        strcat(buf_category,"popular culture/traditional arts");
+                        break;
+                    case 5:
+                        strcat(buf_category,"literature");
+                        break;
                     case 6:
-                        strcat(buf_category,"film");
+                        strcat(buf_category,"film/cinema");
+                        break;
+                    case 7:
+                        strcat(buf_category,"experimental film/video");
+                        break;
+                    case 8:
+                        strcat(buf_category,"broadcasting/press");
+                        break;
+                    case 9:
+                        strcat(buf_category,"new media");
+                        break;
+                    case 0xA:
+                        strcat(buf_category,"arts/culture magazines");
+                        break;
+                    case 0xB:
+                        strcat(buf_category,"fashion");
+                        break;
+                    case 0xF:
+                        strcat(buf_category,"user defined");
+                        break;
+                    default:
+                        strcat(buf_category,"unkonwn");
+                        break;
+                }
+                break;
+            case 8:
+                sprintf(buf_category,"%s","Social_");
+                switch(level_2)
+                {
+                    case 0:
+                        strcat(buf_category,"general");
+                        break;
+                    case 1:
+                        strcat(buf_category,"magazines");
+                        break;
+                    case 2:
+                        strcat(buf_category,"economics/social advisory");
+                        break;
+                    case 3:
+                        strcat(buf_category,"remarkable people");
+                        break;
+                    case 0xF:
+                        strcat(buf_category,"user defined");
+                        break;
+                    default:
+                        strcat(buf_category,"unkonwn");
+                        break;
+                }
+                break;
+            case 9:
+                sprintf(buf_category,"%s","Education_");
+                switch(level_2)
+                {
+                    case 0:
+                        strcat(buf_category,"general");
+                        break;
+                    case 1:
+                        strcat(buf_category,"nature/animals");
+                        break;
+                    case 2:
+                        strcat(buf_category,"technology/natural sciences");
+                        break;
+                    case 3:
+                        strcat(buf_category,"medicine/physiology/psychology");
+                        break;
+                    case 4:
+                        strcat(buf_category,"foreign countries/expeditions");
+                        break;
+                    case 5:
+                        strcat(buf_category,"social/spiritual sciences");
+                        break;
+                    case 6:
+                        strcat(buf_category,"further education");
+                        break;
+                    case 7:
+                        strcat(buf_category,"languages");
+                        break;
+                    case 0xF:
+                        strcat(buf_category,"user defined");
+                        break;
+                    default:
+                        strcat(buf_category,"unkonwn");
+                        break;
+                }
+                break;
+            case 0xA:
+                sprintf(buf_category,"%s","Leisure hobbies");
+                switch(level_2)
+                {
+                    case 0:
+                        strcat(buf_category,"general");
+                        break;
+                    case 1:
+                        strcat(buf_category,"tourism/travel");
+                        break;
+                    case 2:
+                        strcat(buf_category,"handicraft");
+                        break;
+                    case 3:
+                        strcat(buf_category,"motoring");
+                        break;
+                    case 4:
+                        strcat(buf_category,"fitness and health");
+                        break;
+                    case 5:
+                        strcat(buf_category,"cooking");
+                        break;
+                    case 6:
+                        strcat(buf_category,"advertisement/shopping");
+                        break;
+                    case 7:
+                        strcat(buf_category,"gardening");
+                        break;
+                    case 0xF:
+                        strcat(buf_category,"user defined");
+                        break;
+                    default:
+                        strcat(buf_category,"unkonwn");
+                        break;
+                }
+                break;
+            case 0xB:
+                sprintf(buf_category,"%s","Special characteristics");
+                switch(level_2)
+                {
+                    case 0:
+                        strcat(buf_category,"original language");
+                        break;
+                    case 1:
+                        strcat(buf_category,"black and white");
+                        break;
+                    case 2:
+                        strcat(buf_category,"unpublished");
+                        break;
+                    case 3:
+                        strcat(buf_category,"live broadcast");
                         break;
                     default:
                         strcat(buf_category,"unkonwn");
@@ -218,6 +426,7 @@ void EPG::init_epg_info_pf()
                                            ,tempbuf);
                         temp_event_info.category = QString(QLatin1String(tempbuf));
                     }
+                    add_category(temp_event_info);
                     epg_info[j].event_info.push_back(temp_event_info);
                 }
                 flag = 1;
@@ -248,6 +457,7 @@ void EPG::init_epg_info_pf()
                                        ,tempbuf);
                     temp_event_info.category = QString(QLatin1String(tempbuf));
                 }
+                add_category(temp_event_info);
                 temp_epg_info.event_info.push_back(temp_event_info);
             }
             epg_info.push_back(temp_epg_info);
@@ -285,6 +495,7 @@ void EPG::init_epg_info_schedule()
                                            ,tempbuf);
                         temp_event_info.category = QString(QLatin1String(tempbuf));
                     }
+                    add_category(temp_event_info);
                     epg_info[j].event_info.push_back(temp_event_info);
                 }
                 flag = 1;
@@ -315,6 +526,7 @@ void EPG::init_epg_info_schedule()
                                        ,tempbuf);
                     temp_event_info.category = QString(QLatin1String(tempbuf));
                 }
+                add_category(temp_event_info);
                 temp_epg_info.event_info.push_back(temp_event_info);
             }
             epg_info.push_back(temp_epg_info);
@@ -339,7 +551,7 @@ void EPG::init_epg_info_service_id()
             sprintf(tempbuf,"UTC_time:%d/%d/%d %d:%d:%d",epg_info[i].event_info[j].UTC_time.Year
                                                         ,epg_info[i].event_info[j].UTC_time.Mouth
                                                         ,epg_info[i].event_info[j].UTC_time.Day
-                                                        ,epg_info[i].event_info[j].UTC_time.Hour
+                                                        ,epg_info[i].event_info[j].UTC_time.Hour+8
                                                         ,epg_info[i].event_info[j].UTC_time.Min
                                                         ,epg_info[i].event_info[j].UTC_time.Sec);
             group2->setText(0,tempbuf);
@@ -360,40 +572,59 @@ void EPG::init_epg_info_service_id()
         }
     }
 }
+void EPG::add_category(event_information e)
+{
+
+    for(QVector<CATEGORY_information>::Iterator it = category_info.begin();it != category_info.end();it++)
+    {
+        if(it->category_information == e.category)
+        {
+            it->event_info.push_back(e);
+            return ;
+        }
+    }
+    CATEGORY_information temp_cat_info;
+    temp_cat_info.category_information = e.category;
+    temp_cat_info.event_info.push_back(e);
+    category_info.push_back(temp_cat_info);
+}
 void EPG::init_epg_info_category()
 {
     QTreeWidgetItem *group = new QTreeWidgetItem(ui->treeWidget_2);
     group->setText(0,"CATEGORY");
-    for(int i = 0;i < epg_info.length();i++)
+    for(int i = 0;i < category_info.length();i++)
     {
-        sort(epg_info[i].event_info.begin(),epg_info[i].event_info.end(),sort_event_id);
-        epg_info[i].event_info.erase(unique(epg_info[i].event_info.begin(),epg_info[i].event_info.end()),epg_info[i].event_info.end());
-        for(int j = 0;j < epg_info[i].event_info.length();j++)
+        QTreeWidgetItem *name1 = new QTreeWidgetItem(group);
+        name1->setText(0,category_info[i].category_information);
+        for(int j = 0;j < category_info[i].event_info.length();j++)
         {
-            QTreeWidgetItem *group1 = new QTreeWidgetItem(group);
-            sprintf(tempbuf,"category:%s",epg_info[i].event_info[j].category.toLatin1().data());
+            QTreeWidgetItem *name = new QTreeWidgetItem(name1);
+            sprintf(tempbuf,"tiele%d",j+1);
+            name->setText(0,tempbuf);
+            QTreeWidgetItem *group1 = new QTreeWidgetItem(name);
+            sprintf(tempbuf,"category:%s",category_info[i].event_info[j].category.toLatin1().data());
             group1->setText(0,tempbuf);
-            QTreeWidgetItem *group2 = new QTreeWidgetItem(group1);
-            sprintf(tempbuf,"event_id:%d",epg_info[i].event_info[j].event_id);
+            QTreeWidgetItem *group2 = new QTreeWidgetItem(name);
+            sprintf(tempbuf,"event_id:%d",category_info[i].event_info[j].event_id);
             group2->setText(0,tempbuf);
-            QTreeWidgetItem *group3 = new QTreeWidgetItem(group1);
-            sprintf(tempbuf,"UTC_time:%d/%d/%d %d:%d:%d",epg_info[i].event_info[j].UTC_time.Year
-                                                        ,epg_info[i].event_info[j].UTC_time.Mouth
-                                                        ,epg_info[i].event_info[j].UTC_time.Day
-                                                        ,epg_info[i].event_info[j].UTC_time.Hour
-                                                        ,epg_info[i].event_info[j].UTC_time.Min
-                                                        ,epg_info[i].event_info[j].UTC_time.Sec);
+            QTreeWidgetItem *group3 = new QTreeWidgetItem(name);
+            sprintf(tempbuf,"UTC_time:%d/%d/%d %d:%d:%d",category_info[i].event_info[j].UTC_time.Year
+                                                        ,category_info[i].event_info[j].UTC_time.Mouth
+                                                        ,category_info[i].event_info[j].UTC_time.Day
+                                                        ,category_info[i].event_info[j].UTC_time.Hour+8
+                                                        ,category_info[i].event_info[j].UTC_time.Min
+                                                        ,category_info[i].event_info[j].UTC_time.Sec);
             group3->setText(0,tempbuf);
-            QTreeWidgetItem *group4 = new QTreeWidgetItem(group1);
-            sprintf(tempbuf,"duration:%d:%d:%d",epg_info[i].event_info[j].duration_hour
-                                               ,epg_info[i].event_info[j].duration_min
-                                               ,epg_info[i].event_info[j].duration_sec);
+            QTreeWidgetItem *group4 = new QTreeWidgetItem(name);
+            sprintf(tempbuf,"duration:%d:%d:%d",category_info[i].event_info[j].duration_hour
+                                               ,category_info[i].event_info[j].duration_min
+                                               ,category_info[i].event_info[j].duration_sec);
             group4->setText(0,tempbuf);
-            QTreeWidgetItem *group5 = new QTreeWidgetItem(group1);
-            sprintf(tempbuf,"(%c%c%c)%s",epg_info[i].event_info[j].ISO_639_language_code >> 16
-                                        ,(epg_info[i].event_info[j].ISO_639_language_code >> 8 )& 0xff
-                                        ,epg_info[i].event_info[j].ISO_639_language_code & 0xff
-                                        ,epg_info[i].event_info[j].event_name.toLatin1().data());
+            QTreeWidgetItem *group5 = new QTreeWidgetItem(name);
+            sprintf(tempbuf,"(%c%c%c)%s",category_info[i].event_info[j].ISO_639_language_code >> 16
+                                        ,(category_info[i].event_info[j].ISO_639_language_code >> 8 )& 0xff
+                                        ,category_info[i].event_info[j].ISO_639_language_code & 0xff
+                                        ,category_info[i].event_info[j].event_name.toLatin1().data());
             group5->setText(0,tempbuf);
         }
     }
@@ -411,86 +642,3 @@ void EPG::init_tree()
     init_epg_info_service_id();
     init_epg_info_category();
 }
-//void EPG::on_pushButton_clicked()
-//{
-//    ui->textBrowser->clear();
-//    char *time_buf = new char[1024];
-//    int filesize;
-//    const char *filename = "/home/china/Time_info/Time";
-//    fstream fp;
-//    fp.open(filename,ios::in);
-//    fp.seekg(0,ios::end);
-//    filesize = fp.tellg();
-//    fp.seekg(0,ios::beg);
-//    while(filesize > 0)
-//    {
-//        memset(time_buf,0,1024);
-//        fp.read(time_buf,1024);
-//        filesize -= 1024;
-//        ui->textBrowser->append(time_buf);
-//    }
-//    delete []time_buf;
-//    fp.close();
-//}
-
-//void EPG::on_pushButton_3_clicked()
-//{
-//    cout<<dst<<endl;
-//    ui->textBrowser_2->clear();
-//    char *temp = new char[1024];
-//    int filesize = 0;
-//    ui->label_2->setText(QString::number(service_id[dst]));
-//    const char *filename = "/home/china/EPG_info";
-//    sprintf(temp,"%s/%d",filename,service_id[dst]);
-//    fstream fp;
-//    fp.open(temp,ios::in);
-//    if(!fp)
-//    {
-//        ui->textBrowser_2->setText("the service_id no information");
-//    }
-//    fp.seekg(0,ios::end);
-//    filesize = fp.tellg();
-//    fp.seekg(0,ios::beg);
-//    while(filesize > 0)
-//    {
-//        memset(temp,0,1024);
-//        fp.read(temp,1024);
-//        filesize -= 1024;
-//        ui->textBrowser_2->append(temp);
-//    }
-//    fp.close();
-//    delete []temp;
-//    if(dst>=0 && dst<service_id.length())
-//        dst++;
-//}
-
-//void EPG::on_pushButton_4_clicked()
-//{
-//    cout<<dst<<endl;
-//    if(dst>0 && dst<=service_id.length())
-//        dst--;
-//    ui->textBrowser_2->clear();
-//    char *temp = new char[1024];
-//    int filesize = 0;
-//    ui->label_2->setText(QString::number(service_id[dst]));
-//    const char *filename = "/home/china/EPG_info";
-//    sprintf(temp,"%s/%d",filename,service_id[dst]);
-//    fstream fp;
-//    fp.open(temp,ios::in);
-//    if(!fp)
-//    {
-//        ui->textBrowser_2->setText("the service_id no information");
-//    }
-//    fp.seekg(0,ios::end);
-//    filesize = fp.tellg();
-//    fp.seekg(0,ios::beg);
-//    while(filesize > 0)
-//    {
-//        memset(temp,0,1024);
-//        fp.read(temp,1024);
-//        filesize -= 1024;
-//        ui->textBrowser_2->append(temp);
-//    }
-//    fp.close();
-//    delete []temp;
-//}

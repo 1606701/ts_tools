@@ -3,10 +3,13 @@
 #include <QObject>
 #include <QMutex>
 #include <fstream>
+#include <QWaitCondition>
 
 class my_thread: public QObject
 {
     Q_OBJECT;
+
+    char *tempbuf = new char[100];
 public:
     explicit my_thread(QObject *parent = 0);
     /*
@@ -16,11 +19,13 @@ public:
     void request_thread();
     void request_thread1();
     void abort();
-private:
+public:
     bool _abort;
-    bool _working;
+    bool _working = true;
 
     QMutex mutex;
+    QWaitCondition wait_list;
+    QWaitCondition wait_list1;
 
 signals:
     void thread_requested();
@@ -29,7 +34,8 @@ signals:
     void  finished();
 
 public slots:
-    void doWork();
+    void doWork(char *filename,unsigned char *buffer);
+    void doWork1(char *filename,unsigned char *buffer);
 };
 
 #endif // MY_THREAD_H

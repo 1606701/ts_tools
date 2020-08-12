@@ -4,7 +4,7 @@
 #include <QDialog>
 #include <QThread>
 #include <QTreeWidget>
-#include "my_thread.h"
+
 typedef struct Time
 {
     unsigned int Year;
@@ -73,7 +73,7 @@ typedef struct unknown_descriptor
 {
     unsigned descriptor_tag         :8;
     unsigned descriptor_length      :8;
-    QVector<unsigned char> data;
+    QVector<QString> data;
 }unknown_descriptor;
 typedef struct bussiness_descriptor
 {
@@ -106,7 +106,10 @@ typedef struct TS_SDT
     unsigned CRC_32						: 32;
     unsigned check_CRC32                : 32;
     unsigned Is_write                   : 1;
-    unsigned SDT_conut                  : 8;
+    unsigned SDT_count_actual           : 8;
+    unsigned SDT_count_other            : 8;
+    unsigned SDT_actual                 : 1;
+    unsigned SDT_other                  : 1;
 }TS_SDT;
 typedef struct short_event_descriptor
 {
@@ -213,6 +216,49 @@ typedef struct TS_EIT
     unsigned CRC_32 					: 32;
     unsigned check_CRC32                : 32;
 }TS_EIT;
+typedef struct bouquet_name_descriptor
+{
+    unsigned descriptor_tag         :8;
+    unsigned descriptor_length      :8;
+    QString data;
+}bouquet_name_descriptor;
+typedef struct service_info
+{
+    unsigned service_id             :16;
+    unsigned service_type           :8;
+}service_info;
+typedef struct service_list_descriptor
+{
+    unsigned descriptor_tag         :8;
+    unsigned descriptor_length      :8;
+    QVector<service_info> nit_service;
+}service_list_descriptor;
+
+typedef struct transport_stream_descriptor
+{
+    unsigned transport_stram_id             : 16;
+    unsigned original_network_id            : 16;
+    unsigned transport_descriptors_length   : 12;
+    QVector<service_list_descriptor> ser_desc;
+}transport_stream_descriptor;
+
+typedef struct TS_BAT
+{
+    unsigned table_id 					: 8;
+    unsigned section_syntax_indicator   : 1;
+    unsigned section_length				: 12;
+    unsigned bouquet_id                 : 16;
+    unsigned version_number             : 5;
+    unsigned current_next_indicator     : 1;
+    unsigned section_number             : 8;
+    unsigned last_section_number        : 8;
+    unsigned bouquet_descriptors_length :12;
+    QVector<bouquet_name_descriptor> bou_desc;
+    unsigned transport_stream_loop_length :12;
+    QVector<transport_stream_descriptor> tran_desc;
+    unsigned CRC_32 					: 32;
+    unsigned check_CRC32                : 32;
+}TS_BAT;
 
 namespace Ui {
 class Dialog;
@@ -228,12 +274,12 @@ public:
 
 //private:
     Ui::Dialog *ui;
-    QThread *thread;
-    my_thread *mthread;
     char *tempbuf = new char[100];
     QVector<TS_TOT> ts_tot;
     QVector<TS_TDT> ts_tdt;
-    QVector<TS_SDT> ts_sdt;
+    QVector<TS_SDT> ts_sdt_actual;
+    QVector<TS_SDT> ts_sdt_other;
+    QVector<TS_BAT> ts_bat;
     QVector<TS_EIT> ts_eit_pf_actual;
     QVector<TS_EIT> ts_eit_pf_other;
     QVector<TS_EIT> ts_eit_schedule_actual;
@@ -242,15 +288,17 @@ public:
     void init_TOT_tree();
     void init_SDT_tree();
     void init_EIT_tree();
+    void init_BAT_tree();
+
     void init_TDT_tree();
+    void init_SDT_actual_tree();
+    void init_SDT_other_tree();
 
     void init_EIT_PF_actual();
     void init_EIT_PF_other();;
     void init_EIT_schedule_actual();
     void init_EIT_schedule_other();
-//    private slots:
-//    void on_pushButton_clicked();
-//    void on_pushButton_2_clicked();
+
 };
 
 #endif // DIALOG_H

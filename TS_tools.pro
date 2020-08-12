@@ -1,4 +1,5 @@
-QT       += core gui
+QT       += sql 
+QT 	     += concurrent
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -17,24 +18,32 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     basic_info.cpp \
+    database.cpp \
     dialog.cpp \
     epg.cpp \
     main.cpp \
     mainwindow.cpp \
-    my_thread.cpp
+    my_thread.cpp \
+    section_data.cpp \
+    task.cpp
 
 HEADERS += \
     basic_info.h \
+    database.h \
     dialog.h \
     epg.h \
     mainwindow.h \
-    my_thread.h
+    my_thread.h \
+    section_data.h \
+    section_data.h \
+    task.h
 
 FORMS += \
     basic_info.ui \
     dialog.ui \
     epg.ui \
-    mainwindow.ui
+    mainwindow.ui \
+    section_data.ui
 
 TRANSLATIONS += \
     TS_tools_zh_CN.ts
@@ -43,3 +52,4 @@ TRANSLATIONS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+RC_FILE = TS_tools.rc

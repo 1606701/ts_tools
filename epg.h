@@ -5,6 +5,7 @@
 #include <fstream>
 #include <QVector>
 #include "dialog.h"
+
 typedef struct event_information
 {
     unsigned event_id                   : 16;
@@ -28,6 +29,7 @@ typedef struct event_information
         return event_id == rhs.event_id;
     }
 }event_information;
+
 typedef struct EPG_information
 {
     unsigned service_id 				: 16;
@@ -36,7 +38,7 @@ typedef struct EPG_information
 
 typedef struct CATEGORY_information
 {
-    QString category_info;
+    QString category_information;
     QVector<event_information> event_info;
 }CATEGORY_information;
 
@@ -63,13 +65,7 @@ public:
     void init_epg_info_service_id();
     void init_epg_info_category();
     void category_choice_epg(unsigned int level_1, unsigned int level_2,char *buf_category);
-    //bool sort_service_id(EPG_information a,EPG_information b);
-private slots:
-//    void on_pushButton_clicked();
-
-//    void on_pushButton_3_clicked();
-
-//    void on_pushButton_4_clicked();
+    void add_category(event_information e);
 
 private:
     Ui::EPG *ui;
